@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require __DIR__ . '/vendor/autoload.php';
+} else {
+    require __DIR__ . '/../../autoload.php';
+}
+
+$container = new League\Container\Container;
+$container->delegate(
+    new League\Container\ReflectionContainer
+);
+$dependency = new \Ytake\ContentSerializer\Dependency();
+$dependency->define($container);
+
+$app = new \Ytake\ContentSerializer\Application($container);
+$app->registerCommands([
+    $container->get('Ytake\ContentSerializer\Console\PublishCommand'),
+]);
+$app->run();
