@@ -2,38 +2,43 @@
 
 namespace Ytake\ContentSerializer\Client;
 
-use phpseclib\Net\SSH2;
+use Closure;
+use Symfony\Component\Process\Process;
 
-/**
- * Class Ssh
- */
-class Ssh implements SshConnectionInterface
+class SSH extends RemoteProcessor
 {
-    /** @var array */
-    protected $configure;
+    use ConfigurationParser;
 
     /**
-     * Ssh constructor.
+     * Run the given task over SSH.
      *
-     * @param array $configure
+     * @param  \Laravel\Envoy\Task  $task
+     * @return void
      */
-    public function __construct(array $configure)
+    public function run(Task $task, Closure $callback = null)
     {
-        $this->configure = $configure;
-    }
+        $processes = [];
 
-    /**
-     * @param $hostname
-     *
-     * @return SSH2
-     */
-    public function connect($hostname)
-    {
-        if (isset($this->configure[$hostname])) {
+        $callback = $callback ?: function () {};
 
+        // Here we will gather all the process instances by host. We will build them in
+        // an array so we can easily loop through them then start them up. We'll key
+        // the array by the target name and set the value as the process instance.
+        foreach ($task->hosts as $host) {
+            $process = $this->getProcess($host, $task);
+
+            $processes[$process[0]] = $process[1];
         }
-        $ssh = new SSH2($hostname);
-        $ssh->login($this->configure[$hostname]['username'], $this->configure[$hostname]['password']);
-        return $ssh;
+
+        // Next we'll loop through the processes and run them sequentially while taking
+        // the output and feeding it through the callback. This will in turn display
+        // the output back out to the screen for the developer to inspect closely.
+        foreach ($processes as $host => $process) {
+            $process->run(function ($type, $output) use ($host, $callback) {
+                $callback($type, $host, $output);
+            });
+        }
+
+        return $this->gatherExitCodes($processes);
     }
 }

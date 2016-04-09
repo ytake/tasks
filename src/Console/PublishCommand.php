@@ -11,8 +11,6 @@ use Ytake\ContentSerializer\Client\Ssh;
  */
 class PublishCommand extends AbstractCommand
 {
-    use Setter;
-
     /** @var string  command name */
     protected $command = 'content:publish';
 
