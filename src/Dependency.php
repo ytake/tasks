@@ -2,6 +2,8 @@
 
 namespace Ytake\ContentSerializer;
 
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Filesystem\Filesystem;
 use League\Container\ContainerInterface;
 
 /**
@@ -9,27 +11,25 @@ use League\Container\ContainerInterface;
  */
 class Dependency
 {
+    /** @var string $path */
+    protected $path = __DIR__ . '/data/configure.php';
+
+    /**
+     * @param string $path  application path
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
     /**
      * @param ContainerInterface $container
      */
     public function define(ContainerInterface $container)
     {
-        $container->add('app:configure', [
-            'host1',
-        ]);
-        $container->add(
-            'Ytake\ContentSerializer\Client\SshConnectionInterface',
-            'Ytake\ContentSerializer\Client\Ssh'
-        );
-        $container->add('Ytake\ContentSerializer\Client\Ssh')
-            ->withArgument('app:configure');
-
-        $container
-            ->add('Ytake\ContentSerializer\Console\PublishCommand')
-            ->withMethodCall('setDependency',
-                [
-                    'Ytake\ContentSerializer\Client\Ssh',
-                ]
-            );
+        $container->add('app://path', $this->path);
+        $container->add(Repository::class, function() {
+            return new \Illuminate\Config\Repository(require $this->path);
+        });
     }
 }

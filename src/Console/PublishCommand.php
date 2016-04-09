@@ -2,9 +2,9 @@
 
 namespace Ytake\ContentSerializer\Console;
 
+use Illuminate\Contracts\Config\Repository;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Ytake\ContentSerializer\Client\Ssh;
 
 /**
  * Class PublishCommand
@@ -17,15 +17,9 @@ class PublishCommand extends AbstractCommand
     /** @var string  command description */
     protected $description;
 
-    /** @var Ssh  */
-    protected $ssh;
-
-    /**
-     * @param Ssh $ssh
-     */
-    public function setDependency(Ssh $ssh)
+    public function __construct(Repository $config)
     {
-        $this->ssh = $ssh;
+        parent::__construct();
     }
 
     /**
@@ -46,7 +40,12 @@ class PublishCommand extends AbstractCommand
 
     protected function action(InputInterface $input, OutputInterface $output)
     {
-        var_dump($this->ssh);
+//         var_dump($this->ssh);
         // TODO: Implement action() method.
+    }
+    
+    protected function getRemoteProcessor()
+    {
+        
     }
 }

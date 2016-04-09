@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+/**
+ * Application script
+ * @author yuuki takezawa<yuuki.takezawa@comnect.jp.net>
+ */
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require __DIR__ . '/vendor/autoload.php';
 } else {
@@ -13,7 +17,7 @@ $container->delegate(
 );
 $dependency = new \Ytake\ContentSerializer\Dependency();
 $dependency->define($container);
-
+var_dump($container);
 $app = new \Ytake\ContentSerializer\Application($container);
 $app->registerCommands([
     $container->get('Ytake\ContentSerializer\Console\PublishCommand'),

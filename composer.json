@@ -15,10 +15,11 @@
     "symfony/console": "~2.0|~3.0",
     "phpseclib/phpseclib": "~2.0",
     "league/container": "~2.0",
-    "symfony/process": "~2.3"
+    "symfony/process": "~2.3",
+    "illuminate/config": "~5.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.0",
+    "phpunit/phpunit": "~5.0",
     "satooshi/php-coveralls": "dev-master"
   },
   "autoload": {
