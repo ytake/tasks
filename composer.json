@@ -1,5 +1,5 @@
 {
-  "name": "ytake/content-serializer",
+  "name": "ytake/tasks",
   "description": "description_text",
   "minimum-stability": "stable",
   "license": "mit",
@@ -28,6 +28,6 @@
     }
   },
   "bin": [
-    "serializer"
+    "tasks"
   ]
 }

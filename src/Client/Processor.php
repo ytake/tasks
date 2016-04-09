@@ -2,31 +2,23 @@
 
 namespace Ytake\ContentSerializer\Client;
 
-use Illuminate\Contracts\Config\Repository;
-
 /**
  * Class Processor
- * @package Ytake\ContentSerializer\Client
  */
 class Processor
 {
-    /** @var Repository  */
-    private $config;
-
     /**
-     * Processor constructor.
-     * @param Repository $config
+     * access to processor
+     * @param bool $parallel
+     *
+     * @return \Ytake\ContentSerializer\Client\ParallelSSH|\Ytake\ContentSerializer\Client\SSH
      */
-    public function __construct(Repository $config)
+    public function getProcessor($parallel = false)
     {
-        $this->config = $config;
-    }
-
-    public function getRemoteProcessor()
-    {
-        if($this->config->get('parallel', false)) {
+        if ($parallel) {
             return new ParallelSSH();
         }
+
         return new SSH();
     }
 }

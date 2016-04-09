@@ -2,6 +2,9 @@
 
 namespace Ytake\ContentSerializer\Client;
 
+/**
+ * Class SSHConfigFile
+ */
 class SSHConfigFile
 {
     /**
@@ -15,30 +18,17 @@ class SSHConfigFile
      * Create a new SSH configuration file.
      *
      * @param  array  $groups
-     * @return void
      */
     public function __construct(array $groups)
     {
         $this->groups = $groups;
     }
 
-    /**
-     * Parse the given configuration file.
-     *
-     * @param  string  $file
-     * @return \Laravel\Envoy\SSHConfigFile
-     */
     public static function parse($file)
     {
         return static::parseString(file_get_contents($file));
     }
 
-    /**
-     * Parse the given configuration string.
-     *
-     * @param  string  $string
-     * @return \Laravel\Envoy\SSHConfigFile
-     */
     public static function parseString($string)
     {
         $groups = [];
@@ -54,32 +44,17 @@ class SSHConfigFile
                 continue;
             }
 
-            // Keys and values may get separated via an equals, so we'll parse them both
-            // out here and hang onto their values. We will also lower case this keys
-            // and unquotes the values so they are properly formatted for next use.
             if (preg_match('/^\s*(\S+)\s*=(.*)$/', $line, $match)) {
                 $key = strtolower($match[1]);
-
                 $value = self::unquote($match[2]);
-            }
-
-            // Keys and values may also get separated via a space, so we will parse them
-            // out here and hang onto their values. We will also lower case this keys
-            // and unquotes the values so they are properly formatted for next use.
-            else {
+            } else {
                 $segments = preg_split('/\s+/', $line, 2);
-
                 $key = strtolower($segments[0]);
-
                 $value = self::unquote($segments[1]);
             }
 
-            // The configuration file contains sections separated by Host and / or Match
-            // specifications. Therefore, if we come across a Host keyword we start a
-            // new group. If it's a Match we ignore declarations until next 'Host'.
             if ('host' === $key) {
                 $index++;
-
                 $matchSection = false;
             } elseif ('match' === $key) {
                 $matchSection = true;

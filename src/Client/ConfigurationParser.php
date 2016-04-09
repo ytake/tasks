@@ -20,12 +20,7 @@ trait ConfigurationParser
         }
     }
 
-    /**
-     * Get the SSH configuration file instance.
-     *
-     * @param  string  $user
-     * @return \Laravel\Envoy\SSHConfigFile
-     */
+
     protected function getSshConfig($user)
     {
         if (file_exists($path = $this->getHomeDirectory($user).'/.ssh/config')) {

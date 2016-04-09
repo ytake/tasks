@@ -3,7 +3,6 @@
 namespace Ytake\ContentSerializer;
 
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Filesystem\Filesystem;
 use League\Container\ContainerInterface;
 
 /**
@@ -15,7 +14,7 @@ class Dependency
     protected $path = __DIR__ . '/data/configure.php';
 
     /**
-     * @param string $path  application path
+     * @param string $path application path
      */
     public function setPath($path)
     {
@@ -28,7 +27,12 @@ class Dependency
     public function define(ContainerInterface $container)
     {
         $container->add('app://path', $this->path);
-        $container->add(Repository::class, function() {
+        if (file_exists($taskFile = getcwd() . '/tasks.php')) {
+            $container->add('app://path', $taskFile);
+            $this->path = $taskFile;
+        }
+
+        $container->add(Repository::class, function () {
             return new \Illuminate\Config\Repository(require $this->path);
         });
     }
